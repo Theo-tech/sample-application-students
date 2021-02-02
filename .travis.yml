@@ -9,7 +9,7 @@ jobs:
       before_script:
         - cd sample-application-backend
       script:
-        - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar-Dsonar.projectKey=Theo-tech
+        - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar-Dsonar.projectKey=Theo-tech_sample-application-students
       after_script:
         - docker build -t "$User"/backend .
         - docker login -u "$User" -p "$PSWD"
@@ -32,4 +32,4 @@ addons:
     sonarcloud:
       organization: "Theo-tech"
       token: 
-        secure: $Env
+        secure: $SONAR_TOKEN
