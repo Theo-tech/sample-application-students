@@ -14,11 +14,9 @@ jobs:
       before_script:
         - cd sample-application-frontend
       after_script:
+        - docker build -t "$User"/frontend .
         - docker login -u "$User" -p "$PSWD"
-        - docker container commit frontend frontend:latest
-        - docker image tag frontend frontend frontend:latest
-        - docker push frontend
-        - docker push backend
+        - docker push "$User"/frontend
 cache:
   directories:
     - "$HOME/.m2/repository"
