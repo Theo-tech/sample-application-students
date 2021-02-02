@@ -1,6 +1,10 @@
 git:
   depth: 5
 
+stages:
+  - "Build and Test"
+  - "Package"
+
 jobs:
   include:
     - stage: "Build and Test Java"
@@ -9,11 +13,12 @@ jobs:
       before_script:
         - cd sample-application-backend
       script:
-        - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar-Dsonar.projectKey=Theo-tech_sample-application-students
+        - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=Theo-tech_sample-application-students
       after_script:
         - docker build -t "$User"/backend .
         - docker login -u "$User" -p "$PSWD"
         - docker push "$User"/backend
+
     - stage: "Build and Test Nodejs"
       language: node.js
       node_js: "12.20"
@@ -30,6 +35,5 @@ cache:
 
 addons:
     sonarcloud:
-      organization: "Theo-tech"
-      token: 
-        secure: $SONAR_TOKEN
+        organization: "Theo-tech"
+        token: "$SONAR_TOKEN"
