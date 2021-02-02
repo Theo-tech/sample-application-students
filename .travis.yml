@@ -9,7 +9,7 @@ jobs:
       before_script:
         - cd sample-application-backend
       script:
-        - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar-Dsonar.projectKey=devops-2021
+        - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar-Dsonar.projectKey=Theo-tech
       after_script:
         - docker build -t "$User"/backend .
         - docker login -u "$User" -p "$PSWD"
@@ -27,3 +27,9 @@ cache:
   directories:
     - "$HOME/.m2/repository"
     - "$HOME/.npm"
+
+addons:
+    sonarcloud:
+      organization: "Theo-tech"
+      token: 
+        secure: $Env
