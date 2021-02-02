@@ -1,39 +1,62 @@
 git:
-  depth: 5
+    depth: 5
 
 stages:
-  - "Build and Test"
-  - "Package"
+    - "Build and Test"
+    - "Package"
 
 jobs:
-  include:
-    - stage: "Build and Test Java"
-      language: java
-      jdk: oraclejdk11
-      before_script:
-        - cd sample-application-backend
-      script:
-        - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=Theo-tech_sample-application-students
-      after_script:
-        - docker build -t "$User"/backend .
-        - docker login -u "$User" -p "$PSWD"
-        - docker push "$User"/backend
-
-    - stage: "Build and Test Nodejs"
-      language: node.js
-      node_js: "12.20"
-      before_script:
-        - cd sample-application-frontend
-      after_script:
-        - docker build -t "$User"/frontend .
-        - docker login -u "$User" -p "$PSWD"
-        - docker push "$User"/frontend
+    include:
+        - stage: "Build and Test"
+          language: java
+          jdk: oraclejdk11
+          before_script:
+            - cd sample-application-backend
+          script:
+            - echo "Maven build"
+            - mvn clean verify
+            - echo "Run test coverage and Quality Gate"
+            - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=Theo-tech_sample-application-students
+        - stage: "Build and Test"
+          language: node.js
+          node_js: "12.20"
+          before_script:
+            - cd sample-application-frontend
+          script:
+            - echo "NPM install and build"
+            - npm run test
+            
+        - stage: "Package"
+          before_script:
+            - cd sample-application-backend
+          script:
+            - echo "Docker build ..."
+            - docker build -t $User/backend .
+            - docker images
+            - echo "Docker login ..."
+            - echo "$PSWD" | docker login -u "$User" --password-stdin
+            - echo "Docker push ..."
+            - docker push $User/backend
+        - stage: "Package"
+          before_script:
+            - cd sample-application-frontend
+          script:
+            - echo "Docker build ..."
+            - docker build -t $User/frontend .
+            - docker images
+            - echo "Docker login ..."
+            - echo "$PSWD" | docker login -u "$User" --password-stdin
+            - echo "Docker push ..."
+            - docker push $User/frontend
 cache:
-  directories:
-    - "$HOME/.m2/repository"
-    - "$HOME/.npm"
-
+    directories:
+        - "$HOME/.m2/repository"
+        - "$HOME/.npm"
+        
+services:
+    - docker
+    
 addons:
     sonarcloud:
-        organization: "Theo-tech"
+        organization: "theo-tech"
         token: "$SONAR_TOKEN"
