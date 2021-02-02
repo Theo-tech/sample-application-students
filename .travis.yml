@@ -14,7 +14,7 @@ jobs:
       before_script:
         - cd sample-application-frontend
       after_script:
-        - docker login "$User" -p "$PSWD"
+        - docker login -u "$User" -p "$PSWD"
         - docker push frontend
         - docker push backend
 cache:
