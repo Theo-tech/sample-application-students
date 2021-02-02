@@ -8,6 +8,12 @@ jobs:
       jdk: oraclejdk11
       before_script:
         - cd sample-application-backend
+      script:
+        - mvn clean verify org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar-Dsonar.projectKey=devops-2021
+      after_script:
+        - docker build -t "$User"/backend .
+        - docker login -u "$User" -p "$PSWD"
+        - docker push "$User"/backend
     - stage: "Build and Test Nodejs"
       language: node.js
       node_js: "12.20"
