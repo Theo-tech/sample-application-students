@@ -13,6 +13,10 @@ jobs:
       node_js: "12.20"
       before_script:
         - cd sample-application-frontend
+      after_script:
+        - docker login "$User" -p "$PSWD"
+        - docker push frontend
+        - docker push backend
 cache:
   directories:
     - "$HOME/.m2/repository"
